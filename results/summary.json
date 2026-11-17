@@ -1,0 +1,38 @@
+{
+ "note": "Frozen numbers from the development devices (argon = Gemma 3 1B converted + router-specialised). CPU, float32, one layer per axis (0.8 depth), BOS where the model has one.",
+ "axes": {
+  "argon_1b": {"context": {"acc": 1.0, "p": 0.009, "n": 8},
+               "self": {"acc": 1.0, "p": 0.025, "n": 6},
+               "familiarity": {"acc": 1.0, "p": 0.002, "n": 20, "layer": 0},
+               "cos_context_self": -0.015},
+  "gemma_3_1b_it": {"context": {"acc": 1.0, "p": 0.009},
+                    "self": {"acc": 0.833, "p": 0.188},
+                    "familiarity": {"acc": 1.0, "p": 0.002, "n": 12, "layer": 0},
+                    "cos_context_self": -0.018},
+  "gemma_4_e2b_it": {"context": {"acc": 1.0, "p": 0.009},
+                     "self": {"acc": 1.0, "p": 0.059},
+                     "familiarity": {"acc": 1.0, "p": 0.002, "n": 12, "layer": 0},
+                     "cos_context_self": -0.084},
+  "nanogpt_gpt2_124m": {"context": {"acc": 1.0, "p": 0.009},
+                        "self": {"acc": 1.0, "p": 0.059},
+                        "familiarity": {"acc": 1.0, "p": 0.002, "n": 12, "layer": 3},
+                        "cos_context_self": -0.054}
+ },
+ "audit": {
+  "argon_1b": {"real_stable": 8, "nonce_without_or_unstable": 7, "context_covered": 8,
+               "auroc": 0.938, "n_positive_claims": 8, "n_negative_claims": 16},
+  "gemma_3_1b_it": {"real_stable": 8, "nonce_without_or_unstable": 8, "context_covered": 8,
+                    "auroc": 1.0, "n_positive_claims": 15, "n_negative_claims": 16}
+ },
+ "known_failure": {
+  "mode": "stable confabulation",
+  "observed": "Oxwald -> London in 3 of 4 wordings (Argon), scored H=0",
+  "effect": "AUROC 1.000 -> 0.938",
+  "handling": "reported, not relabelled; external verification is the only fix"
+ },
+ "limits": {
+  "familiarity_is_lexical": "axis sits at layer 0; it reads known-word, not known-fact",
+  "context_reader_is_prompt_family_bound": "8/8 on the calibrated wording, 3/8 on another, 8/8 after aligning",
+  "coverage_is_not_truth": "memorised falsehoods pass by construction"
+ }
+}
