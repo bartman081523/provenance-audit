@@ -13,7 +13,7 @@ from __future__ import annotations
 import re
 from typing import Any, Dict, List, Optional, Sequence
 
-from .cells import paraphrase_prompts
+from .cells import PARAPHRASES
 
 
 def extract_claim(text: str, vocabulary: Sequence[str]) -> Optional[str]:
@@ -39,11 +39,20 @@ def stability(claims: Sequence[Optional[str]]) -> (Optional[str], float):
 
 
 def audit_entity(backend: Any, entity: str, vocabulary: Sequence[str],
-                 n_tokens: int = 12) -> Dict[str, Any]:
+                 n_tokens: int = 12,
+                 templates: Sequence[str] = PARAPHRASES,
+                 extract=None) -> Dict[str, Any]:
+    """Ask the same entity in several wordings; claims must survive them.
+
+    `templates` is adapter-tunable: a model that was trained without a
+    trailing "?" is out of distribution with one, and then the audit measures
+    parsing rather than coverage (measured on Tiny 2.1).
+    """
+    take = extract or (lambda t: extract_claim(t, vocabulary))
     claims, texts = [], []
-    for prompt in paraphrase_prompts(entity):
+    for prompt in (t.format(X=entity) for t in templates):
         _, text = backend.generate(prompt, n_tokens)
-        claims.append(extract_claim(text, vocabulary))
+        claims.append(take(text))
         texts.append(text)
     modal, stab = stability(claims)
     return {"entity": entity, "claims": claims, "texts": texts,
@@ -53,8 +62,11 @@ def audit_entity(backend: Any, entity: str, vocabulary: Sequence[str],
 
 
 def audit(backend: Any, entities: Sequence[str],
-          vocabulary: Sequence[str], n_tokens: int = 12) -> Dict[str, Any]:
-    rows = [audit_entity(backend, e, vocabulary, n_tokens) for e in entities]
+          vocabulary: Sequence[str], n_tokens: int = 12,
+          templates: Sequence[str] = PARAPHRASES,
+          extract=None) -> Dict[str, Any]:
+    rows = [audit_entity(backend, e, vocabulary, n_tokens, templates, extract)
+            for e in entities]
     asserted = [r for r in rows if r["asserted"]]
     flagged = [r for r in rows if r["H"] > 0]
     return {"rows": rows, "n": len(rows), "n_asserted": len(asserted),
