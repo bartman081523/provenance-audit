@@ -6,7 +6,7 @@ without loading a model. A "backend" only has to provide hidden states.
 from __future__ import annotations
 
 import math
-from typing import Dict, Optional, Sequence, Tuple
+from typing import Dict, Sequence, Tuple
 
 import numpy as np
 

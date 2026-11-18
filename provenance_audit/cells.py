@@ -14,7 +14,7 @@ probability is the claim), plus bookkeeping fields.
 """
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, List, Sequence
+from typing import Callable, Dict, List, Sequence
 
 CODES = (("1", "Berlin"), ("2", "Paris"), ("3", "Tokyo"), ("4", "Rome"),
          ("5", "Madrid"), ("6", "Vienna"), ("7", "Athens"), ("8", "Lisbon"))

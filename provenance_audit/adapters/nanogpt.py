@@ -4,7 +4,7 @@ from __future__ import annotations
 import importlib.util
 import os
 import sys
-from typing import Any, List, Sequence, Tuple
+from typing import List, Sequence, Tuple
 
 import numpy as np
 

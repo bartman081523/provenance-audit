@@ -10,7 +10,7 @@ trained: the directions are mean differences on calibration cells.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List, Sequence
+from typing import Any, Dict, Sequence
 
 import numpy as np
 

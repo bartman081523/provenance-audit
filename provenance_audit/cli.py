@@ -8,7 +8,7 @@ import sys
 
 from . import audit as audit_mod
 from . import axes, indicator
-from .cells import CODES, FACTS, FAMILIAR, NOVEL
+from .cells import CODES
 
 SEEDS = ("The harbour lights fade after midnight.",
          "A copper wire carries the signal faster than glass.",

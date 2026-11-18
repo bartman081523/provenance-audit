@@ -11,11 +11,9 @@ and will not be flagged; catching that needs external verification.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
-import numpy as np
-
-from .axes import axis_scores, export
+from .axes import axis_scores
 
 
 def flag(backend: Any, calib: Dict[str, Any], text: str) -> Dict[str, Any]:

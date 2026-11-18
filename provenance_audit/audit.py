@@ -11,7 +11,7 @@ Silence is not a hallucination, so an empty answer scores 0.
 from __future__ import annotations
 
 import re
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Any, Dict, Optional, Sequence, Tuple
 
 from .cells import PARAPHRASES
 
@@ -27,7 +27,7 @@ def extract_claim(text: str, vocabulary: Sequence[str]) -> Optional[str]:
     return best[1] if best else None
 
 
-def stability(claims: Sequence[Optional[str]]) -> (Optional[str], float):
+def stability(claims: Sequence[Optional[str]]) -> Tuple[Optional[str], float]:
     got = [c for c in claims if c]
     if not got:
         return None, 0.0
