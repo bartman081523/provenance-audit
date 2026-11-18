@@ -29,10 +29,24 @@ def flag(backend: Any, calib: Dict[str, Any], text: str) -> Dict[str, Any]:
     ctx = float(axis_scores(axes["context"], H)[0])
     fam = float(axis_scores(axes["familiarity"], H)[0])
     slf = float(axis_scores(axes["self"], H)[0])
-    ctx_on = ctx > 0.0
-    fam_on = fam > 0.0
+    # Only axes that passed their own calibration may justify an answer.
+    # An axis that separates nothing (p ~ 1, acc ~ chance) still produces a
+    # non-zero dot product, and using its sign would call every answer
+    # "context-justified". Measured on Tiny 2.1, whose context axis has no
+    # in-context channel at all.
+    verdict = calib.get("verdict") or {}
+    active = {k: bool(verdict.get(k, True))
+              for k in ("context", "familiarity", "self")}
+    ctx_on = active["context"] and ctx > 0.0
+    fam_on = active["familiarity"] and fam > 0.0
+    if not (active["context"] or active["familiarity"]):
+        return {"justified": None, "reason": "no-usable-axis",
+                "active": active, "score_context": ctx,
+                "score_familiarity": fam, "score_self": slf,
+                "p_top": backend.top_prob(backend.encode(text))}
     return {"justified": bool(ctx_on or fam_on),
             "reason": "context" if ctx_on else ("familiar" if fam_on else "none"),
+            "active": active,
             "score_context": ctx, "score_familiarity": fam, "score_self": slf,
             "p_top": backend.top_prob(backend.encode(text))}
 
